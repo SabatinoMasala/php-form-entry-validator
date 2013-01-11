@@ -34,3 +34,7 @@ Small note: when speaking of "value", the value linked to the key of the array t
     numeric - specify this if the value can only be a number
     regex:param - specify this if the value has to match a certain regex (param is a regex)
     function:param - specify this to use a custom callback method to validate the value (param is the name of the function)
+    equalto:param - specify this to match the value to the other value (param is the key index of the other value)
+    minwords:param - specify a number of minimum words required (param is an int)
+    maxwords:param - specify a number of maximum words allowed (param is an int)
+    filetype:param - specify which filetypes are allowed (param is a string with comma separated file extensions)

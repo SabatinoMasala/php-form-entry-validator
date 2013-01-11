@@ -10,6 +10,7 @@
 	}
 
 	require 'validator/Validator.php';
+	$validator = new Validator();
 
 	if(!empty($_POST["btnSubmit"])){
 		$errors = $validator->validate(array(
