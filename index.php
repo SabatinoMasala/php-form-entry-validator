@@ -1,5 +1,7 @@
 <?php
 
+	require 'template/head.html';
+
 	function trace($msg, $debug = false){
 		echo "<pre>";
 		if (!$debug) print_r($msg);
@@ -9,27 +11,53 @@
 
 	require 'Validator.php';
 
-	$_POST["name"] = "ff";
-	$_POST["url"] = "dsdf";
-
-	$validator = new Validator();
-
-	$arrErrors = $validator->validate(array(
-		"name" => array(
-			"name" => "Name field",
-			"rules" => array("required", "minlength:3"),
-			"unset" => true,
-			"messages" => array(
-				"required" => "This field cannot stay empty"
+	if(!empty($_POST["btnSubmit"])){
+		$validator = new Validator();
+		$errors = $validator->validate(array(
+			"firstname" => array(
+				"rules" => "required"
+			),
+			"lastname" => array(
+				"rules" => "required"
+			),
+			"email" => array(
+				"rules" => array("required", "email"),
+				"unset" => true
+			),
+			"url" => array(
+				"name" => "Website link",
+				"rules" => "url",
+				"unset" => true
+			),
+			"pattern" => array(
+				"name" => "Special pattern",
+				"rules" => array("required","regex:/^[0-9]{2}[a-zA-Z]{3}$/"),
+				"messages" => array(
+					"regex" => "Please enter 2 digits, followed by 3 letters"
+				),
+				"unset" => true
+			),
+			"minmax" => array(
+				"name" => "Minmax field",
+				"rules" => array("minlength:3", "maxlength:10"),
+				"unset" => true
 			)
-		),
-		"url" => array(
-			"name" => "URL",
-			"rules" => "regex:/[0-9]+/"
-		)
-	), $_POST);
+		), $_POST);
 
-	trace($arrErrors);
-	
+		$_POST = $validator->arrGlobal;
+
+		if(count($errors) == 0){
+			unset($_POST);
+			echo "<p style='display:block;text-align:center;background-color: #5bd877; padding: 10px 0; color: #333;'>Form submission was successfull</p>";
+		}
+		else{
+			echo "<p style='display:block;text-align:center;background-color: #d8676a; padding: 10px 0; color: #333;'>Please fix the following errors:</p>";
+			trace($errors);
+		}
+	}
+
+	require 'template/body.php';
+
+	require 'template/foot.html';
 
 ?>

@@ -2,7 +2,7 @@
 
 	class Validator{
 
-		private $arrGlobal = array();
+		public $arrGlobal = array();
 		private $arrErrors = array();
 		private $arrToValidate = array();
 		private $unsetArray = array();
@@ -125,7 +125,7 @@
 					break;
 
 					case "maxlength":
-						$message = $name." must have maximum %p characters";
+						$message = $name." can have maximum %p characters";
 					break;
 
 					case "regex":
@@ -196,7 +196,7 @@
 		 */
 
 		private function checkURL($value, $key){
-			$regex = "/((\w+:\/\/)?[-a-zA-Z0-9:@;?&=\/%\+\.\*!'\(\),\$_\{\}\^~\[\]`#|]+)/";
+			$regex = "/^(https?:\/\/)?(w{3}\.)?[a-zA-Z0-9-_]+\.[a-zA-Z]{2,4}\/?$/";
 			$passed = preg_match($regex, $value);
 			if(!$passed){
 				$this->setError("url", $key);
