@@ -9,7 +9,7 @@
 
 	require 'Validator.php';
 
-	$_POST["name"] = "f";
+	$_POST["name"] = "ff";
 	$_POST["url"] = "dsdf";
 
 	$validator = new Validator();
@@ -17,11 +17,10 @@
 	$arrErrors = $validator->validate(array(
 		"name" => array(
 			"name" => "Name field",
-			"rules" => array("required", "minlength:10"),
+			"rules" => array("required", "minlength:3"),
 			"unset" => true,
 			"messages" => array(
-				"required" => "This field cannot stay empty",
-				"minlength" => "Please enter 10 or more characters"
+				"required" => "This field cannot stay empty"
 			)
 		),
 		"url" => array(

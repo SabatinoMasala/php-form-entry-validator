@@ -100,7 +100,7 @@
 		 * Function to set the global error array and (if property unset is true) the unsetting array
 		 */
 
-		private function setError($rule, $key){
+		private function setError($rule, $key, $params=false){
 			$name = !empty($this->arrToValidate[$key]["name"]) ? $this->arrToValidate[$key]["name"] : $key;
 			$message = "Message not defined";
 			if(!empty($this->arrToValidate[$key]["messages"][$rule])){
@@ -121,17 +121,21 @@
 					break;
 
 					case "minlength":
-						$message = $name." must have at least x characters";
+						$message = $name." must have at least %p characters";
 					break;
 
 					case "maxlength":
-						$message = $name." must have maximum x characters";
+						$message = $name." must have maximum %p characters";
 					break;
 
 					case "regex":
 						$message = $name." doesn't match the requested pattern";
 					break;
 				}
+			}
+
+			if($params){
+				$message = str_replace("%p", $params, $message);
 			}
 
 			$this->arrErrors[] = $message;
@@ -242,7 +246,7 @@
 			if(!$length) $length = 3;
 			$passed = (strlen($val) >= $length);
 			if(!$passed && $key){
-				$this->setError("minlength", $key);
+				$this->setError("minlength", $key, $length);
 			}
 			return $passed;
 		}
@@ -256,7 +260,7 @@
 			if(!$length) $length = 3;
 			$passed = (strlen($val) <= $length);
 			if(!$passed){
-				$this->arrErrors[] = "maxlengtherror";
+				$this->setError("maxlength", $key, $length);
 			}
 			return $passed;
 		}
