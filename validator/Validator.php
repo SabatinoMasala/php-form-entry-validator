@@ -125,7 +125,38 @@
 					break;
 
 					case "maxlength":
-						$message = $name." can have maximum %p characters";
+						$message = $name." can have a maximum of %p characters";
+					break;
+
+					case "numeric":
+						$message = $name." must be a numeric value";
+					break;
+
+					case "function":
+						$message = $name." must match the requested requirements";
+					break;
+
+					case "equalto":
+						$oldParams = $params;
+						$params = !empty($this->arrToValidate[$params]["name"]) ? $this->arrToValidate[$params]["name"] : $params;
+						if(empty($this->arrGlobal[$oldParams])){
+							$message = "Both ".$name." and ".$params." are required.";
+						}
+						else{
+							$message = $name." must be equal to %p";
+						}
+					break;
+
+					case "minwords":
+						$message = $name." must have at least %p words";
+					break;
+
+					case "maxwords":
+						$message = $name." can have a maximum of %p words";
+					break;
+
+					case "filetype":
+						$message = $name." must match the specific filetype";
 					break;
 
 					case "regex":
@@ -181,6 +212,30 @@
 					return $this->checkRegex($value, $parameter, $key);
 				break;
 
+				case "numeric":
+					return $this->checkNumeric($value, $key);
+				break;
+
+				case "function":
+					return $this->checkFunction($value, $parameter, $key);
+				break;
+
+				case "equalto":
+					return $this->checkEqual($value, $parameter, $key);
+				break;
+
+				case "minwords":
+					return $this->checkMinWords($value, $parameter, $key);
+				break;
+
+				case "maxwords":
+					return $this->checkMaxWords($value, $parameter, $key);
+				break;
+
+				case "filetype":
+					return $this->checkFileType($value, $parameter, $key);
+				break;
+
 				default:
 
 					throw new Exception("Rule not found", 1);
@@ -192,13 +247,101 @@
 		}
 
 		/**
+		 * Small helper to return an explode
+		 */
+
+		private function commaSeparatedToParameters($val){
+			return explode(",", $val);
+		}
+
+		/**
+		 * Will check if the value matches the given filetypes
+		 */
+
+		private function checkFileType($value, $parameter, $key){
+			$parameter = $this->commaSeparatedToParameters($parameter);
+			preg_match_all("/.*\.([a-zA-Z]{2,4})$/", $value, $matches);
+			$fileType = $matches[count($matches)-1][0];
+			$passed = in_array($fileType, $parameter);
+			if(!$passed && $key){
+				$this->setError("filetype", $key);
+			}
+			return $passed;
+		}
+
+		/**
+		 * Function to check maximum number of words in value
+		 */
+
+		private function checkMaxWords($value, $parameter, $key){
+			$passed = str_word_count($value) <= $parameter;
+			if(!$passed && $key){
+				$this->setError("maxwords", $key, $parameter);
+			}
+			return $passed;
+		}
+
+		/**
+		 * Function to check minimum number of words in value
+		 */
+
+		private function checkMinWords($value, $parameter, $key){
+			$passed = str_word_count($value) >= $parameter;
+			if(!$passed && $key){
+				$this->setError("minwords", $key, $parameter);
+			}
+			return $passed;
+		}
+
+		/**
+		 * Function to match the value of 2 keys
+		 */
+
+		private function checkEqual($value, $parameter, $key){
+			if(!empty($this->arrGlobal[$parameter])){
+				$passed = ($value == $this->arrGlobal[$parameter]);
+			}
+			else{
+				$passed =  false;
+			}
+			if(!$passed && $key){
+				$this->setError("equalto", $key, $parameter);
+			}
+			return $passed;
+		}
+
+		/**
+		 * Function to specify a custom function to handle the validation
+		 */
+
+		private function checkFunction($value, $parameter, $key){
+			$passed = call_user_func($parameter, $value);
+			if(!$passed && $key){
+				$this->setError("function", $key);
+			}
+			return $passed;
+		}
+
+		/**
+		 * Function to check if the value is numeric
+		 */
+		
+		private function checkNumeric($value, $key){
+			$passed = is_numeric($value);
+			if(!$passed && $key){
+				$this->setError("numeric", $key);
+			}
+			return $passed;
+		}
+
+		/**
 		 * Function to check if the value is a valud url
 		 */
 
 		private function checkURL($value, $key){
 			$regex = "/^(https?:\/\/)?(w{3}\.)?[a-zA-Z0-9-_]+\.[a-zA-Z]{2,4}\/?$/";
 			$passed = preg_match($regex, $value);
-			if(!$passed){
+			if(!$passed && $key){
 				$this->setError("url", $key);
 			}
 			return $passed;

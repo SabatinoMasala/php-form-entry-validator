@@ -12,7 +12,6 @@
 	require 'validator/Validator.php';
 
 	if(!empty($_POST["btnSubmit"])){
-		$validator = new Validator();
 		$errors = $validator->validate(array(
 			"firstname" => array(
 				"rules" => "required"
@@ -54,6 +53,7 @@
 			echo "<p style='display:block;text-align:center;background-color: #d8676a; padding: 10px 0; color: #333;'>Please fix the following errors:</p>";
 			trace($errors);
 		}
+
 	}
 
 	require 'template/body.php';
