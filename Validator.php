@@ -102,7 +102,39 @@
 
 		private function setError($rule, $key){
 			$name = !empty($this->arrToValidate[$key]["name"]) ? $this->arrToValidate[$key]["name"] : $key;
-			$this->arrErrors[] = $name." ".$rule." error";
+			$message = "Message not defined";
+			if(!empty($this->arrToValidate[$key]["messages"][$rule])){
+				$message = $this->arrToValidate[$key]["messages"][$rule];
+			}
+			else{
+				switch ($rule) {
+					case 'required':
+						$message = $name." is required";
+						break;
+
+					case "email":
+						$message = $name." is not a valid email address";
+					break;
+
+					case "url":
+						$message = $name." is not a valid URL";
+					break;
+
+					case "minlength":
+						$message = $name." must have at least x characters";
+					break;
+
+					case "maxlength":
+						$message = $name." must have maximum x characters";
+					break;
+
+					case "regex":
+						$message = $name." doesn't match the requested pattern";
+					break;
+				}
+			}
+
+			$this->arrErrors[] = $message;
 			$unset = !empty($this->arrToValidate[$key]["unset"]);
 			if($unset) $this->unsetArray[] = $key;
 		}
@@ -142,7 +174,7 @@
 				break;
 
 				case "regex":
-					return $this->regex($value, $parameter, $key);
+					return $this->checkRegex($value, $parameter, $key);
 				break;
 
 				default:
@@ -194,7 +226,7 @@
 		 */
 
 		private function checkNotEmpty($value, $key){
-			$passed = strlen($value) > 1;
+			$passed = strlen($value) >= 1;
 			if(!$passed && $key){
 				$this->setError("required", $key);
 			}
