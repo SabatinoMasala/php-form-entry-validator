@@ -9,7 +9,7 @@
 		echo "</pre>";
 	}
 
-	require 'Validator.php';
+	require 'validator/Validator.php';
 
 	if(!empty($_POST["btnSubmit"])){
 		$validator = new Validator();

@@ -1,6 +1,6 @@
 <body>
 <div id="wrapper" class="container">
-	<form action="index.php" method="post">
+	<form action="example.php" method="post">
     	<fieldset>
     		<legend>Fill out the form to test out the validation</legend>
     		<div class="col">
