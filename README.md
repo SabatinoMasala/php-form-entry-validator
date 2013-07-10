@@ -19,7 +19,7 @@ An example:
         "name" => "Name of field",
         "rules" => array("required", "minlength:10", "maxlength:10")
       )
-    ), $_POST)
+    ), $_POST);
 
 Overview of rules
 ========================
